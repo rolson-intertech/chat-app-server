@@ -1,4 +1,4 @@
-import { MasterServer, IServerPlugin } from "./master-server.server";
+import { MasterServer, IServerPlugin } from "./master.server";
 import { EP_GET_ALL_MESSAGES, MSG_SEND_MESSAGE, MSG_MESSAGE_RECEIVED, IChatMessage } from "./shared-definitions";
 import { MongoClient, Db, ObjectId } from "mongodb";
 import * as socketio from 'socket.io';
@@ -7,7 +7,7 @@ import * as socketio from 'socket.io';
 const MESSAGE_COLLECTION_NAME = 'messages';
 
 /** Server Plugin that handles chat message handling. */
-export class ChatPlugin implements IServerPlugin {
+export class ChatServerPlugin implements IServerPlugin {
     constructor(dbConnectionString: string) {
         this.dbConnectionString = dbConnectionString;
     }

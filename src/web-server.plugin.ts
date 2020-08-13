@@ -1,4 +1,4 @@
-import { MasterServer, IServerPlugin } from "./master-server.server";
+import { MasterServer, IServerPlugin } from "./master.server";
 import Express from 'express';
 import * as path from 'path';
 

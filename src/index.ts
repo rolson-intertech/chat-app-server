@@ -1,7 +1,7 @@
 
 import { WebServerPlugin } from "./web-server.plugin";
-import { MasterServer } from "./master-server.server";
-import { ChatPlugin } from "./chat.plugin";
+import { MasterServer } from "./master.server";
+import { ChatServerPlugin } from "./chat-server.plugin";
 import * as path from 'path';
 
 /** Connection string to our MongoDB. */
@@ -12,7 +12,7 @@ const mongoDbConnectionString = 'mongodb://localhost';
 const staticFileLocation = path.join('../..', 'chat-app/dist');
 
 // Create our plugins for use in the master server.
-const chatPlugin = new ChatPlugin(mongoDbConnectionString);
+const chatPlugin = new ChatServerPlugin(mongoDbConnectionString);
 const webServerPlugin = new WebServerPlugin(staticFileLocation);
 
 // Create and initialize the master server.
