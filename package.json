@@ -1,0 +1,24 @@
+{
+  "name": "chat-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc && node ./dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.9",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.7",
+    "@types/mongodb": "^3.5.25",
+    "@types/node": "^14.0.26",
+    "@types/socket.io": "^2.1.10",
+    "typescript": "^3.9.7"
+  }
+}
