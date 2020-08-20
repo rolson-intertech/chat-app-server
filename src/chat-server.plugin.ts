@@ -1,4 +1,6 @@
 import { MasterServer, IServerPlugin } from "./master.server";
+import { convertDates } from "./shared-definitions";
+import { EP_SEND_NEW_MESSAGE } from "./shared-definitions";
 import { EP_GET_ALL_MESSAGES, MSG_SEND_MESSAGE, MSG_MESSAGE_RECEIVED, IChatMessage } from "./shared-definitions";
 import { MongoClient, Db, ObjectId } from "mongodb";
 import * as socketio from 'socket.io';
@@ -27,8 +29,11 @@ export class ChatServerPlugin implements IServerPlugin {
         // Connect our client to the database.
         this.dbClient = new MongoClient(this.dbConnectionString);
 
-        // Get the database reference for this.
-        this.db = this.dbClient.db();
+        // Connect the client to the server.
+        this.dbClient.connect().then(() => {
+            // Get the database reference for this.
+            this.db = this.dbClient.db();
+        });
 
         // Setup the socket server to respond to realtime messaging.
         this.setupSocketServer();
@@ -36,22 +41,40 @@ export class ChatServerPlugin implements IServerPlugin {
 
     registerRoutes(): void {
         // Register a route to get all messages from the database.
-        //  This will only respond to request for the GET method, and ignore others.
+        //  This will only respond to request for the POST method, and ignore others.
         //  NOTE: This COULD be implemented using sockets, but it illustrates how API
         //  calls are made.
-        this.masterServer.expressApp.get(EP_GET_ALL_MESSAGES, (req, res) => {
+        this.masterServer.expressApp.post(EP_GET_ALL_MESSAGES, (req, res) => {
             // Get the messages from the database.
             this.getAllMessages().then(result => {
                 // Return them to the response.
                 res.send(result);
             })
         });
+
+        // Register a route for the user to send a message to the chat.
+        this.masterServer.expressApp.post(EP_SEND_NEW_MESSAGE, (req, res) => {
+            // Get the body as a message object.
+            let message = <IChatMessage>JSON.parse(req.body);
+
+            // Convert date strings on this object to dates.
+            convertDates(message);
+
+            // Broadcast the message to others.
+            this.socket.emit(MSG_MESSAGE_RECEIVED, message);
+
+            // Save this message to the database.
+            this.createMessage(message).then(() => {
+                res.end();
+            });
+
+        });
     }
 
     /** Sets up the Socket.IO functionality, along with callbacks for client requests. */
     private setupSocketServer(): void {
         // Create the socket server.
-        this.socket = require('socket.io')(this.masterServer.expressApp);
+        this.socket = require('socket.io')(this.masterServer.httpServer);
 
         // When we receive a connection, we need to setup our
         //  callbacks to handlers for those listening.

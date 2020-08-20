@@ -7,6 +7,8 @@ import * as path from 'path';
 export class WebServerPlugin implements IServerPlugin {
     constructor(contentPath: string) {
         this.contentPath = contentPath;
+
+        console.log(`Serving files from: ${contentPath}`);
     }
 
     /** Full path to the root folder of files that this webserver will be serving from.
@@ -30,5 +32,4 @@ export class WebServerPlugin implements IServerPlugin {
         // This will cause express to serve file requests from matching files found in the contentPath.
         this.masterServer.expressApp.get('*', Express.static(this.contentPath));
     }
-
 }
