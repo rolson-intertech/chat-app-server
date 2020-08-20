@@ -25,7 +25,6 @@ export class MasterServer {
         this.initialize();
     }
 
-
     private _httpServer: http.Server;
     /** Returns the underlying node HTTP server used for communications with the client. */
     get httpServer(): http.Server {
